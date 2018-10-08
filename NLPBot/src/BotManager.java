@@ -19,6 +19,7 @@ public class BotManager extends TelegramLongPollingBot
 	private KioskDatabase	database;
 	private List<User>		usersList;
 	private int				kioskID;
+	private User			lastUser;
 
 	public BotManager()
 	{
@@ -57,11 +58,12 @@ public class BotManager extends TelegramLongPollingBot
 	@Override
 	public void onUpdateReceived(Update update)
 	{
-		long chat_id = update.getMessage().getChatId();
-		User currentUser = checkUserExistance(update.getMessage());
 
 		if (update.hasMessage())
 		{
+			long chat_id = update.getMessage().getChatId();
+			User currentUser = checkUserExistance(update.getMessage());
+			this.lastUser = currentUser;
 			String message_text = update.getMessage().getText();
 			SendMessage message = new SendMessage()
 				.setChatId(chat_id)
@@ -86,7 +88,7 @@ public class BotManager extends TelegramLongPollingBot
 				rowsInline.add(rowInline);
 				keyboardMarkup.setKeyboard(rowsInline);
 				message.setReplyMarkup(keyboardMarkup)
-					.setText(BotConstants.Messages.CHOOSE_TYPE);
+					.setText(currentUser.getUserName() + BotConstants.Messages.CHOOSE_TYPE);
 			}
 			else if (currentUser.getUserState() == BotConstants.State.SIMPLE)
 			{
@@ -102,15 +104,20 @@ public class BotManager extends TelegramLongPollingBot
 			}
 			else if (currentUser.getUserState() == BotConstants.State.COMPLEX)
 			{
+				String type= "";
 				currentUser.setUserState(BotConstants.State.DONE);
 				for (Kiosk item : currentUser.getUsersText())
 				{
 					if (!item.isComplete())
+					{
+						type = item.getTextType();
 						item.setComplexText(message_text);
+						item.setComplete(true);
+					}
 					break;
 				}
 
-				message.setText(BotConstants.Messages.FINISHED);
+				message.setText("با تشکر جمله " + type + " شما ذخیره شد");
 			}
 			else if (currentUser.getUserState() == BotConstants.State.DONE)
 				message.setText(BotConstants.Messages.START_NEW);
@@ -127,9 +134,10 @@ public class BotManager extends TelegramLongPollingBot
 		}
 		else if (update.hasCallbackQuery())
 		{
+			long chat_id = update.getCallbackQuery().getMessage().getChatId();
 			String call_data = update.getCallbackQuery().getData();
 			long message_id = update.getCallbackQuery().getMessage().getMessageId();
-			Kiosk newText = new Kiosk(kioskID, currentUser);
+			Kiosk newText = new Kiosk(kioskID, this.lastUser);
 
 			// defining text type
 			if (call_data.equals(BotConstants.CallBack.QUESTION))
@@ -143,7 +151,7 @@ public class BotManager extends TelegramLongPollingBot
 
 			// adding this new kiosk to user's kiosk list
 			addNewKiosk(newText);
-			currentUser.setUserState(BotConstants.State.SIMPLE);
+			this.lastUser.setUserState(BotConstants.State.SIMPLE);
 
 			EditMessageText new_message = new EditMessageText()
 				.setChatId(chat_id)

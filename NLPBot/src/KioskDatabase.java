@@ -13,7 +13,7 @@ public class KioskDatabase
 
 	public KioskDatabase()
 	{
-		this.connection = createConnectionToDB();
+		// this.connection = createConnectionToDB();
 	}
 
 	public Connection getConnection()
@@ -63,7 +63,7 @@ public class KioskDatabase
 		try
 		{
 			Class.forName("com.mysql.jdbc.Driver");
-			return DriverManager.getConnection("jdbc:mysql://localhost:3306/NLPLAB", "root", "1234"); // TODO pass ro vared kon
+			return DriverManager.getConnection("jdbc:mysql://localhost:3306/", "", ""); // TODO pass ro vared kon
 		}
 		catch (ClassNotFoundException | SQLException ex)
 		{

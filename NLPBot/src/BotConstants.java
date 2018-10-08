@@ -7,10 +7,10 @@ public class BotConstants
 {
 	public class Type
 	{
-		public static final String	QUESTION	= "سوال";
+		public static final String	QUESTION	= "سوالی";
 		public static final String	ORDER		= "امری";
-		public static final String	CRITICISM	= "انتقاد";
-		public static final String	OFFER		= "پیشنهاد";
+		public static final String	CRITICISM	= "انتقادی";
+		public static final String	OFFER		= "پیشنهادی";
 	}
 
 	public class CallBack
@@ -32,7 +32,7 @@ public class BotConstants
 
 	public class Messages
 	{
-		public static final String	CHOOSE_TYPE		= "لطفا یکی از گزینه های زیر را انتخاب کنید";
+		public static final String	CHOOSE_TYPE		= " عزیز خوش آمدید. لطفا یکی از گزینه های زیر را انتخاب کنید";
 		public static final String	SIMPLE_TEXT		= "لطفا جمله خود را وارد کنید";
 		public static final String	COMPLEX_TEXT	= "لطفا جمله خود را در بیانی دیگر وارد کنید";
 		public static final String	FINISHED		= "با تشکر جمله شما ذخیره شد";
