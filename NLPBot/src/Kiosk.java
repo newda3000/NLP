@@ -7,9 +7,17 @@ public class Kiosk
 {
 	private int		id;
 	private User	user;
-	private int		textType;
+	private String	textType;
 	private String	simpleText;
 	private String	complexText;
+	private boolean	complete;
+
+	public Kiosk(int id, User user)
+	{
+		this.id = id;
+		this.user = user;
+		this.setComplete(false);
+	}
 
 	public int getId()
 	{
@@ -31,12 +39,12 @@ public class Kiosk
 		this.user = user;
 	}
 
-	public int getTextType()
+	public String getTextType()
 	{
 		return textType;
 	}
 
-	public void setTextType(int textType)
+	public void setTextType(String textType)
 	{
 		this.textType = textType;
 	}
@@ -59,5 +67,15 @@ public class Kiosk
 	public void setComplexText(String complexText)
 	{
 		this.complexText = complexText;
+	}
+
+	public boolean isComplete()
+	{
+		return complete;
+	}
+
+	public void setComplete(boolean complete)
+	{
+		this.complete = complete;
 	}
 }
