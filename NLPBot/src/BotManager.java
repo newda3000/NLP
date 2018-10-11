@@ -63,6 +63,9 @@ public class BotManager extends TelegramLongPollingBot
 		{
 			long chat_id = update.getMessage().getChatId();
 			User currentUser = checkUserExistance(update.getMessage());
+
+			System.out.format(BotConstants.LogStatements.NEW_INCOME, currentUser.getUserName(), chat_id);
+
 			this.lastUser = currentUser;
 			String message_text = update.getMessage().getText();
 			SendMessage message = new SendMessage()
@@ -104,7 +107,7 @@ public class BotManager extends TelegramLongPollingBot
 			}
 			else if (currentUser.getUserState() == BotConstants.State.COMPLEX)
 			{
-				String type= "";
+				String type = "";
 				currentUser.setUserState(BotConstants.State.DONE);
 				for (Kiosk item : currentUser.getUsersText())
 				{
@@ -129,6 +132,7 @@ public class BotManager extends TelegramLongPollingBot
 			}
 			catch (TelegramApiException e)
 			{
+				System.out.println(BotConstants.Exceptions.SENDING_MESSAGE);
 				e.printStackTrace();
 			}
 		}
@@ -163,6 +167,7 @@ public class BotManager extends TelegramLongPollingBot
 			}
 			catch (TelegramApiException e)
 			{
+				System.out.println(BotConstants.Exceptions.CALL_BACK);
 				e.printStackTrace();
 			}
 		}

@@ -16,6 +16,13 @@ public class User
 	private int			userState;
 	private List<Kiosk>	usersText;
 
+	public User(long telegramUserID)
+	{
+		this.telegramUserID = telegramUserID;
+		this.userState = BotConstants.State.WELCOME;
+		this.usersText = new LinkedList<>();
+	}
+
 	public User(long chatID, long telegramUserID, String userName, String firstName, String lastName)
 	{
 		this.chatID = chatID;
