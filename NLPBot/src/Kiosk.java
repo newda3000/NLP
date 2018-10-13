@@ -12,11 +12,17 @@ public class Kiosk
 	private String	complexText;
 	private boolean	complete;
 
+	public Kiosk(User user)
+	{
+		this.user = user;
+		this.complete = false;
+	}
+
 	public Kiosk(int id, User user)
 	{
 		this.id = id;
 		this.user = user;
-		this.setComplete(false);
+		this.complete = false;
 	}
 
 	public int getId()

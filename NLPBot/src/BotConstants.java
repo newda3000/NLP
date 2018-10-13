@@ -71,6 +71,7 @@ public class BotConstants
 		public static final String	EXISTANCE		= "Something went wrong while checking %s %s existence";
 		public static final String	INSERT			= "Could not insert %s in database";
 		public static final String	REMOVE			= "Could not remove %s from database";
+		public static final String	CLEAR_DB		= "Could not clear database";
 	}
 
 	public class LogStatements

@@ -18,8 +18,8 @@ public class BotManager extends TelegramLongPollingBot
 
 	private KioskDatabase	database;
 	private List<User>		usersList;
-	private int				kioskID;
-	private User			lastUser;
+	// private int kioskID;
+	private User lastUser;
 
 	public BotManager()
 	{
@@ -39,8 +39,9 @@ public class BotManager extends TelegramLongPollingBot
 
 	public void addNewKiosk(Kiosk newKiosk)
 	{
-		newKiosk.getUser().getUsersText().add(newKiosk);
-		kioskID++; // in case of db there is no need of this line
+		getDatabase().insertNewKiosk(newKiosk);
+		// newKiosk.getUser().getUsersText().add(newKiosk);
+		// kioskID++; // in case of db there is no need of this line
 	}
 
 	public User getUser(long userID)
@@ -62,7 +63,10 @@ public class BotManager extends TelegramLongPollingBot
 		if (update.hasMessage())
 		{
 			long chat_id = update.getMessage().getChatId();
-			User currentUser = checkUserExistance(update.getMessage());
+			User currentUser = checkUserExistanceInDB(update.getMessage());
+
+			// just for caching
+			// User currentUser = checkUserExistanceInCache(update.getMessage());
 
 			System.out.format(BotConstants.LogStatements.NEW_INCOME, currentUser.getUserName(), chat_id);
 
@@ -75,6 +79,7 @@ public class BotManager extends TelegramLongPollingBot
 			if (message_text.equals("/start"))
 			{
 				currentUser.setUserState(BotConstants.State.BEGIN);
+				getDatabase().updateUser(lastUser);
 
 				InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
 				List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
@@ -96,10 +101,14 @@ public class BotManager extends TelegramLongPollingBot
 			else if (currentUser.getUserState() == BotConstants.State.SIMPLE)
 			{
 				currentUser.setUserState(BotConstants.State.COMPLEX);
+				getDatabase().updateUser(lastUser);
 				for (Kiosk item : currentUser.getUsersText())
 				{
 					if (!item.isComplete())
+					{
 						item.setSimpleText(message_text);
+						getDatabase().updateKiosk(item);
+					}
 					break;
 				}
 
@@ -109,6 +118,7 @@ public class BotManager extends TelegramLongPollingBot
 			{
 				String type = "";
 				currentUser.setUserState(BotConstants.State.DONE);
+				getDatabase().updateUser(lastUser);
 				for (Kiosk item : currentUser.getUsersText())
 				{
 					if (!item.isComplete())
@@ -116,6 +126,7 @@ public class BotManager extends TelegramLongPollingBot
 						type = item.getTextType();
 						item.setComplexText(message_text);
 						item.setComplete(true);
+						getDatabase().updateKiosk(item);
 					}
 					break;
 				}
@@ -141,7 +152,7 @@ public class BotManager extends TelegramLongPollingBot
 			long chat_id = update.getCallbackQuery().getMessage().getChatId();
 			String call_data = update.getCallbackQuery().getData();
 			long message_id = update.getCallbackQuery().getMessage().getMessageId();
-			Kiosk newText = new Kiosk(kioskID, this.lastUser);
+			Kiosk newText = new Kiosk(this.lastUser);
 
 			// defining text type
 			if (call_data.equals(BotConstants.CallBack.QUESTION))
@@ -156,6 +167,7 @@ public class BotManager extends TelegramLongPollingBot
 			// adding this new kiosk to user's kiosk list
 			addNewKiosk(newText);
 			this.lastUser.setUserState(BotConstants.State.SIMPLE);
+			getDatabase().updateUser(lastUser);
 
 			EditMessageText new_message = new EditMessageText()
 				.setChatId(chat_id)
@@ -176,13 +188,13 @@ public class BotManager extends TelegramLongPollingBot
 	@Override
 	public String getBotUsername()
 	{
-		return null;
+		return "";
 	}
 
 	@Override
 	public String getBotToken()
 	{
-		return null;
+		return "";
 	}
 
 	/****************************************************
@@ -190,12 +202,12 @@ public class BotManager extends TelegramLongPollingBot
 	 ****************************************************/
 
 	/**
-	 * If user is already in database, finds it and returns a full user object,
-	 * if not creates a new user and add's it to database.
+	 * If user is already in cache, finds it and returns a full user object,
+	 * if not creates a new user and add's it to cache.
 	 *
 	 * @return
 	 */
-	private User checkUserExistance(Message newIncome)
+	private User checkUserExistanceInCache(Message newIncome)
 	{
 		User newUser = getUser(newIncome.getChat().getId());
 		if (newUser != null)
@@ -205,6 +217,26 @@ public class BotManager extends TelegramLongPollingBot
 			newIncome.getChat().getUserName(), newIncome.getChat().getFirstName(), newIncome.getChat().getLastName());
 
 		addNewUser(newUser);
+		return newUser;
+
+	}
+
+	/**
+	 * If user is already in database, finds it and returns a full user object,
+	 * if not creates a new user and add's it to database.
+	 *
+	 * @return
+	 */
+	private User checkUserExistanceInDB(Message newIncome)
+	{
+		User newUser = getDatabase().fetchUser(newIncome.getChat().getId());
+		if (newUser != null)
+			return newUser;
+
+		newUser = new User(newIncome.getChatId(), newIncome.getChat().getId(),
+			newIncome.getChat().getUserName(), newIncome.getChat().getFirstName(), newIncome.getChat().getLastName());
+
+		getDatabase().insertNewUser(newUser);
 		return newUser;
 
 	}

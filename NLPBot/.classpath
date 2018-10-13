@@ -5,5 +5,6 @@
 	<classpathentry kind="lib" path="D:/Applications/Java/Jar files/Telegram/java-telegram-bot-api-full.jar"/>
 	<classpathentry kind="lib" path="D:/Applications/Java/Jar files/Telegram/telegrambots-4.0.1-jar-with-dependencies.jar" sourcepath="C:/Users/newda/AppData/Local/Temp/.org.sf.feeling.decompiler1538649238876/source/telegrambots-4.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="D:/Applications/Java/Jar files/Telegram/telegrambots-chat-session-bot-4.0.1-jar-with-dependencies.jar"/>
+	<classpathentry kind="lib" path="D:/Applications/Java/Jar files/mysql-connector-java-5.1.23-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
