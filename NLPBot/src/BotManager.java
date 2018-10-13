@@ -18,8 +18,7 @@ public class BotManager extends TelegramLongPollingBot
 
 	private KioskDatabase	database;
 	private List<User>		usersList;
-	// private int kioskID;
-	private User lastUser;
+	private User			lastUser;
 
 	public BotManager()
 	{
@@ -40,8 +39,6 @@ public class BotManager extends TelegramLongPollingBot
 	public void addNewKiosk(Kiosk newKiosk)
 	{
 		getDatabase().insertNewKiosk(newKiosk);
-		// newKiosk.getUser().getUsersText().add(newKiosk);
-		// kioskID++; // in case of db there is no need of this line
 	}
 
 	public User getUser(long userID)
@@ -108,8 +105,8 @@ public class BotManager extends TelegramLongPollingBot
 					{
 						item.setSimpleText(message_text);
 						getDatabase().updateKiosk(item);
+						break;
 					}
-					break;
 				}
 
 				message.setText(BotConstants.Messages.COMPLEX_TEXT);
@@ -127,8 +124,8 @@ public class BotManager extends TelegramLongPollingBot
 						item.setComplexText(message_text);
 						item.setComplete(true);
 						getDatabase().updateKiosk(item);
+						break;
 					}
-					break;
 				}
 
 				message.setText("با تشکر جمله " + type + " شما ذخیره شد");

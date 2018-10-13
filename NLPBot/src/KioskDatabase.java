@@ -199,7 +199,7 @@ public class KioskDatabase
 			stm.setString(2, newInput.getSimpleText());
 			stm.setString(3, newInput.getComplexText());
 			stm.setBoolean(4, newInput.isComplete());
-			stm.setLong(5, newInput.getUser().getId());
+			stm.setLong(5, newInput.getId());
 			stm.execute();
 		}
 		catch (SQLException ex)
@@ -217,7 +217,7 @@ public class KioskDatabase
 		try
 		{
 			Class.forName("com.mysql.jdbc.Driver");
-			return DriverManager.getConnection("jdbc:mysql://localhost:3306/nlp", "", "");
+			return DriverManager.getConnection("jdbc:mysql://localhost:3306/nlp?useUnicode=yes&characterEncoding=UTF-8", "", "");
 		}
 		catch (ClassNotFoundException | SQLException ex)
 		{
